@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>概念关系：Agent / 大模型的上下文 / Skill — ai-concept-lab</title>
+<style>
+:root{
+  --bg:#fafafa; --fg:#1f2328; --muted:#57606a; --accent:#0969da;
+  --card:#ffffff; --border:#d0d7de; --code:#f6f8fa; --shadow:0 1px 3px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:48px 24px 80px}
+header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px}
+header h1{margin:0 0 8px;font-size:32px}
+header .meta{color:var(--muted);font-size:14px}
+section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:20px 0;box-shadow:var(--shadow)}
+section h2{margin:0 0 12px;font-size:22px;color:var(--accent);border-bottom:1px dashed var(--border);padding-bottom:8px}
+section h3{margin:18px 0 8px;font-size:17px}
+p{margin:10px 0}
+blockquote{border-left:4px solid var(--accent);background:var(--code);margin:14px 0;padding:10px 14px;border-radius:0 6px 6px 0;color:#3a3a3a}
+code{background:var(--code);padding:2px 6px;border-radius:4px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--code)}
+.mermaid{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;margin:16px 0;text-align:center}
+.crumb{display:inline-block;font-size:12px;color:var(--muted);background:var(--code);border:1px solid var(--border);border-radius:999px;padding:2px 10px;margin-right:6px}
+footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-relationship</span></div>
+  <h1>概念关系：Agent · 大模型的上下文 · Skill</h1>
+  <div class="meta">配套学习资料：<a href="./agent.html">agent.html</a> · <a href="./llm-context.html">llm-context.html</a> · <a href="./skill.html">skill.html</a></div>
+</header>
+
+<section id="one-liner">
+  <h2>一句话总结</h2>
+  <p><strong>大模型（LLM）是引擎，Context 是这台引擎的"桌面"，Agent 把引擎+桌面+工具组装成"能办事的人"，Skill 则是给这个人准备的"岗位手册"</strong>。</p>
+  <p>三者关系是"<strong>能力分层 + 知识沉淀</strong>"：LLM 提供原生能力，Context 决定每次能用多少能力，Agent 决定怎么把能力变成行动，Skill 决定行动的质量上限。</p>
+</section>
+
+<section id="diagram">
+  <h2>关系图（Mermaid）</h2>
+  <div class="mermaid">
+flowchart TD
+    LLM[LLM 大模型<br/>推理与生成引擎] -->    AG[Agent<br/>自主决策与行动]
+    CTX[Context 上下文<br/>单次可用的工作记忆] --> AG
+    TL[Tools 工具<br/>对外部世界的接口] --> AG
+    MEM[Memory 记忆<br/>跨对话的长期存储] --> AG
+    SK[Skill 任务知识<br/>可复用的流程与规范] --> AG
+    AG --> OUT[任务结果<br/>输出 / 行动 / 决策]
+    subgraph 关键观察
+      CTX -.限制 AG 单步能处理的信息量.-> AG
+      SK -.影响 AG 执行同类任务的一致性.-> AG
+    end
+  </div>
+  <p style="font-size:13px;color:var(--muted)">图中虚线箭头表示"<strong>约束/影响</strong>"而非直接数据流——这正是这两个概念容易被忽视的关系。</p>
+</section>
+
+<section id="table">
+  <h2>横向对比</h2>
+  <table>
+    <thead>
+      <tr><th>概念</th><th>本质</th><th>解决了什么问题</th><th>典型产出</th><th>常见误解</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>大模型的上下文（Context）</strong></td>
+        <td>LLM 单次能看见和产出的 token 集合</td>
+        <td>信息量瓶颈：模型"读不到、记不住"</td>
+        <td>合理裁剪后的提示词、RAG 检索片段、对话历史</td>
+        <td>把 context 等同于"记忆"，以为越大越好</td>
+      </tr>
+      <tr>
+        <td><strong>Agent</strong></td>
+        <td>能自主规划、调用工具、执行任务的 AI 系统</td>
+        <td>从"会说话"到"会办事"</td>
+        <td>订票 Agent、研究 Agent、浏览器 Agent</td>
+        <td>把任何"用 LLM 串起来的工作流"都叫 Agent</td>
+      </tr>
+      <tr>
+        <td><strong>Skill</strong></td>
+        <td>封装好的、可被 AI 按需加载的任务知识</td>
+        <td>把团队隐性约定、AI 输出风格、流程规范沉淀为可复用资产</td>
+        <td>SKILL.md 描述的"<strong>岗位手册</strong>"</td>
+        <td>把 Skill 当成"万能 Prompt"，写一个大而全的</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="context-affects-agent">
+  <h2>重点 1：Context 如何影响 Agent 的工作</h2>
+  <p>Agent 的"思考-行动-观察"循环每一步都要消耗上下文。具体影响分三层：</p>
+  <ol>
+    <li><strong>容量限制</strong>：每一步都要把"之前的思考 + 工具返回结果"塞回上下文。当 Agent 走 20 步以后，单步历史可能就占掉大半窗口。</li>
+    <li><strong>质量衰减</strong>：上面提到的 <strong>context rot</strong>——模型对靠后内容注意力会下降。这意味着 Agent 后半段决策质量往往不如前半段。</li>
+    <li><strong>成本放大</strong>：Agent 跑得越久，输入 token 越多，单次任务成本越高。</li>
+  </ol>
+  <p>所以工程上"<strong>好 Agent</strong>"的一个标志是：<strong>能主动管理上下文</strong>——定期摘要、丢弃无关历史、把长工具返回裁剪到关键片段。这正是 Skill 能"教"Agent 做的事之一。</p>
+  <pre><code># 一种典型的上下文管理策略
+keep = ["system_prompt", "current_goal", "last_3_steps"]
+discard = older_tool_results
+summarize = discarded_long_outputs
+rebuild_context = system_prompt + goal + last_3_steps + summarized_history</code></pre>
+</section>
+
+<section id="skill-affects-agent">
+  <h2>重点 2：Skill 如何沉淀可复用的任务知识</h2>
+  <p>Skill 的核心价值不是"<strong>让 AI 更聪明</strong>"，而是"<strong>让 AI 干活更一致</strong>"。它从三个维度影响 Agent：</p>
+  <ul>
+    <li><strong>流程固化</strong>：把"这类任务应该按什么顺序做"写进 Skill，Agent 不用每次自己摸索。</li>
+    <li><strong>输出规范</strong>：把"团队/个人对输出的格式要求"写进 Skill，AI 输出一次就达标，省掉返工。</li>
+    <li><strong>质量基线</strong>：把"自检清单"写进 Skill，让 AI 在交付前自查，避免低级错误。</li>
+  </ul>
+  <p>这就像一家公司：<strong>LLM 是新员工的天赋，Agent 是岗位本身，Skill 是岗位手册</strong>。手册越细、越贴业务，新员工产出就越稳定。</p>
+  <blockquote>本仓库里的 <code>concept-explainer</code> 本身就是一个 Skill。它把"如何系统讲清楚一个概念"沉淀成了可复用的流程，本页面的三份 HTML 都是按它的模板生成的——这是一个 Skill 在自我演示。</blockquote>
+</section>
+
+<section id="recap">
+  <h2>小结</h2>
+  <ul>
+    <li>三个概念是"<strong>引擎 / 桌面 / 手册</strong>"的层次关系。</li>
+    <li>Context 决定 Agent <strong>一次能走多远</strong>。</li>
+    <li>Skill 决定 Agent <strong>每次走得对不对</strong>。</li>
+    <li>好的 AI 系统 = 好的 LLM × 好的 Context 管理 × 好的 Skill 沉淀 × 工具与记忆的合理组装。</li>
+  </ul>
+</section>
+
+<footer>
+  本关系图与说明由 ai-concept-lab 仓库维护，可与三份单概念 HTML 配合阅读。
+</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ startOnLoad: true, theme: 'default' });
+  }
+</script>
+</body>
+</html>

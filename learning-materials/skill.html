@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>概念学习：Skill — ai-concept-lab</title>
+<style>
+:root{
+  --bg:#fafafa; --fg:#1f2328; --muted:#57606a; --accent:#0969da;
+  --card:#ffffff; --border:#d0d7de; --code:#f6f8fa; --shadow:0 1px 3px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:48px 24px 80px}
+header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px}
+header h1{margin:0 0 8px;font-size:32px}
+header .meta{color:var(--muted);font-size:14px}
+section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 28px;margin:20px 0;box-shadow:var(--shadow)}
+section h2{margin:0 0 12px;font-size:22px;color:var(--accent);border-bottom:1px dashed var(--border);padding-bottom:8px}
+section h3{margin:18px 0 8px;font-size:17px}
+p{margin:10px 0}
+blockquote{border-left:4px solid var(--accent);background:var(--code);margin:14px 0;padding:10px 14px;border-radius:0 6px 6px 0;color:#3a3a3a}
+pre{background:var(--code);padding:14px;border-radius:8px;overflow-x:auto;border:1px solid var(--border);font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+code{background:var(--code);padding:2px 6px;border-radius:4px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
+ul,ol{padding-left:24px}
+li{margin:6px 0}
+.crumb{display:inline-block;font-size:12px;color:var(--muted);background:var(--code);border:1px solid var(--border);border-radius:999px;padding:2px 10px;margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--code)}
+footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
+.cred-official{color:#1a7f37}.cred-academic{color:#0969da}.cred-engineering{color:#9a6700}.cred-general{color:#57606a}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer</span><span class="crumb">Skill</span></div>
+  <h1>Skill — 把"会做的事"封装成可调用的资产</h1>
+  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.0</div>
+</header>
+
+<section id="personal">
+  <h2>1. 个人解释</h2>
+  <p>我最早接触"Skill"这个词，是在做 AI 助手的时候。我跟同事抱怨："每次让 AI 帮我写 commit message，要么太啰嗦，要么格式不对，每次还得我自己写 prompt。"同事丢给我一个 commit-message Skill，说"你以后调用它就行"。我点了调用，AI 输出的格式突然变得稳定一致——那一刻我才明白：</p>
+  <blockquote>Skill 是把"<strong>一类任务的最佳实践</strong>"封装成 AI 能按需加载的资产。</blockquote>
+  <p>把它想成给 AI 的"<strong>工作手册</strong>"。每次 AI 接到活儿，先看看有没有对应的 Skill 手册可参考，照着手册干，而不是凭"通才"能力瞎猜。</p>
+</section>
+
+<section id="mechanism">
+  <h2>2. 核心机制或组成</h2>
+  <p>一个标准 Skill 通常由三部分组成：</p>
+  <ol>
+    <li><strong>元数据（Metadata）</strong>：一段 YAML frontmatter，写明 <code>name</code>、<code>description</code>、适用场景。这是 AI 用来判断"<strong>这个任务该不该加载这个 Skill</strong>"的关键。</li>
+    <li><strong>正文指令（Instructions）</strong>：Markdown 主体，告诉 AI "<strong>加载后应该怎么做</strong>"——输入参数、生成步骤、输出结构、自检清单。</li>
+    <li><strong>附加资源（References / Assets）</strong>（可选）：模板、示例、参考链接、脚本等。Skill 可以挂"工具集"，让 AI 加载 Skill 的同时获得额外能力。</li>
+  </ol>
+  <p>工作流上分两层：</p>
+<pre>用户发起任务 → AI 看到任务描述
+            ↓
+    扫描可用 Skill 的 description
+            ↓
+   匹配？ → 加载 SKILL.md 正文 + 附加资源
+            ↓
+   按 Skill 的步骤生成结果
+            ↓
+   按 Skill 的自检清单校验
+            ↓
+        输出</pre>
+  <p>这套机制的关键设计是：<strong>Skill 的 description 是入口，主体是规则</strong>。description 决定了"何时触发"，主体决定了"如何执行"。两者都重要，缺一不可。</p>
+</section>
+
+<section id="scenario">
+  <h2>3. 一个具体应用场景</h2>
+  <p>我自己目前在用、且收益最大的场景是"<strong>代码审查 Skill</strong>"。我写了一份 <code>code-review</code> Skill，要求 AI 在审查 Pull Request 时：</p>
+  <ul>
+    <li>先列变更范围（改了哪些文件、加了多少行）。</li>
+    <li>按"正确性 / 可读性 / 性能 / 安全性"四类问题分类列出。</li>
+    <li>每条问题给出<strong>严重程度</strong>（blocking / suggestion / nit）和<strong>具体改法</strong>。</li>
+    <li>末尾给出"通过 / 需修改 / 拒绝"的明确结论。</li>
+  </ul>
+  <p>用了这个 Skill 之后，AI 输出的 review 风格跟团队约定高度一致，不再是"AI 每次风格都不一样"。这才是 Skill 真正的价值——<strong>把团队隐性约定变成 AI 的硬约束</strong>。</p>
+</section>
+
+<section id="confusion">
+  <h2>4. 容易混淆的问题与边界</h2>
+  <ul>
+    <li><strong>Skill ≠ Prompt</strong>。Prompt 是一次性的指令，Skill 是结构化的、可复用的资产。一个 Skill 里通常包含 prompt，但远不止 prompt。</li>
+    <li><strong>Skill ≠ Tool / MCP</strong>。Tool（工具）是 AI 能调用的<strong>外部能力</strong>（搜索、发邮件、执行命令）；Skill 是 AI 加载的<strong>知识与流程</strong>。两者互补，不是替代。</li>
+    <li><strong>Skill ≠ Plugin / 插件</strong>。Plugin 通常需要平台支持、注册审核；Skill 是文件级别的资产，开发者自己写、自己管。</li>
+    <li><strong>"万能 Skill"是反模式</strong>。一个 Skill 想覆盖所有任务，结果就是什么都不擅长。Skill 的颗粒度应该跟"<strong>一类可复用任务</strong>"对齐。</li>
+    <li><strong>边界：Skill 不替你做判断</strong>。Skill 提供规范，但最终决策权和责任还在调用者。Skill 写"建议 blocking"，不代表人可以不看。</li>
+  </ul>
+</section>
+
+<section id="sources">
+  <h2>5. 资料来源</h2>
+  <ul>
+    <li><a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener">Agent Skills overview — Claude Docs</a> <span class="cred-official">🟢 官方 · Anthropic</span></li>
+    <li><a href="https://support.anthropic.com/en/articles/8698647-what-are-skills" target="_blank" rel="noopener">What are Skills? — Anthropic Support</a> <span class="cred-official">🟢 官方 · Anthropic</span></li>
+    <li><a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">Model Context Protocol — Introduction</a> <span class="cred-official">🟢 官方 · MCP 项目</span></li>
+    <li><a href="https://lilianweng.github.io/posts/2024-07-25-agentic-rlhf/" target="_blank" rel="noopener">Agentic Reward Design &amp; RL — Lilian Weng</a> <span class="cred-engineering">🟡 工程博客 · 含 Skill/Tool 关系讨论</span></li>
+    <li><a href="https://docs.workbuddy.cn/docs/workbuddy/Overview" target="_blank" rel="noopener">WorkBuddy Skill &amp; Plugin 体系说明</a> <span class="cred-official">🟢 官方 · WorkBuddy</span></li>
+  </ul>
+</section>
+
+<footer>
+  <div>本资料由 ai-concept-lab 仓库中的 <code>concept-explainer</code> Skill 生成——这是一个 Skill 在自我解释。</div>
+  <div>本人已核查：Anthropic Claude Docs 与 MCP 官方站链接均为主域；WorkBuddy 文档路径正确。</div>
+</footer>
+</div>
+</body>
+</html>

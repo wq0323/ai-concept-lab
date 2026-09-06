@@ -14,7 +14,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,B
 header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px}
 header h1{margin:0 0 8px;font-size:32px}
 header .meta{color:var(--muted);font-size:14px}
-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 28px;margin:20px 0;box-shadow:var(--shadow)}
+section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:20px 0;box-shadow:var(--shadow)}
 section h2{margin:0 0 12px;font-size:22px;color:var(--accent);border-bottom:1px dashed var(--border);padding-bottom:8px}
 section h3{margin:18px 0 8px;font-size:17px}
 p{margin:10px 0}
@@ -27,6 +27,9 @@ li{margin:6px 0}
 table{width:100%;border-collapse:collapse;margin:12px 0}
 th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
 th{background:var(--code)}
+details summary{cursor:pointer;font-weight:600;color:var(--accent);margin:6px 0}
+details[open] summary{margin-bottom:8px}
+.goals li::marker{color:var(--accent)}
 footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 .cred-official{color:#1a7f37}.cred-academic{color:#0969da}.cred-engineering{color:#9a6700}.cred-general{color:#57606a}
 </style>
@@ -34,19 +37,41 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 <body>
 <div class="wrap">
 <header>
-  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer</span><span class="crumb">Agent</span></div>
+  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer v1.1</span><span class="crumb">Agent</span></div>
   <h1>Agent — 不只是"会聊天的 AI"</h1>
-  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.0</div>
+  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.1 · level=intermediate · angle=综合</div>
 </header>
 
+<section id="goals">
+  <h2>1. 学习目标</h2>
+  <p>读完这份资料，你应该能：</p>
+  <ul class="goals">
+    <li><strong>理解</strong>：用一句话讲清楚 Agent 的工作定义，并说出它与 Chatbot 的核心区别。</li>
+    <li><strong>应用</strong>：描述 ReAct 框架"思考 → 行动 → 观察 → 再思考"循环的基本流程。</li>
+    <li><strong>区分</strong>：列举 Agent、Chatbot、Copilot、LLM Pipeline 四个相邻概念的边界。</li>
+    <li><strong>评估</strong>：判断一个具体系统是否算真正的 Agent（而不是"挂个 LLM 的脚本"）。</li>
+  </ul>
+</section>
+
 <section id="personal">
-  <h2>1. 个人解释</h2>
+  <h2>2. 个人解释</h2>
   <p>我第一次把 Agent 想明白，是在我用 AutoGPT 让它自己上网订机票的时候。我给它一个目标"帮我订一张明天从北京到上海、最便宜的红眼航班"，它自己拆任务、自己去查航班、自己比对价格、自己填表下单。我盯着屏幕那一刻我才意识到：哦，这跟 ChatGPT 完全不是一种东西。</p>
   <p>我后来给 Agent 下过一个朴素的工作定义：<strong>Agent = 能感知环境 → 自己做决策 → 自己采取行动的 AI 系统</strong>。它跟我直接聊天的 Chatbot 最大的区别在于：Chatbot 是"我问你答、你说我听"，Agent 是"你给目标，它自己干"。它的关键不在于"有没有 LLM"，而在于"<strong>有没有自主行动的能力</strong>"。</p>
 </section>
 
+<section id="core-questions">
+  <h2>3. 核心问题</h2>
+  <p>读到这里先停一下。围绕 Agent，这几个问题值得自己先想一遍：</p>
+  <ol>
+    <li><strong>为什么"能自己采取行动"是 Agent 与 Chatbot 的本质区别？</strong>（而不是"用了更大的模型"或者"调用了更多 API"？）</li>
+    <li><strong>ReAct 循环里的 "Observation" 步骤为什么不能省？</strong>如果省掉，Agent 会变成什么样？</li>
+    <li><strong>自主性和可控性如何权衡？</strong>一个完全自主的 Agent 在生产环境能直接用吗？</li>
+    <li><strong>Agent 在什么场景下其实并不比确定性 Pipeline 更好？</strong>（别迷信 Agent 是万能解药。）</li>
+  </ol>
+</section>
+
 <section id="mechanism">
-  <h2>2. 核心机制或组成</h2>
+  <h2>4. 结构化解释：核心机制与组成</h2>
   <p>拆开看，一个能用的 Agent 通常包含四块：</p>
   <ol>
     <li><strong>规划（Planning）</strong>：拿到目标后，先拆解成子任务。比如"订机票"会被拆成"查航班 → 比价 → 选航班 → 填乘客信息 → 付款"。</li>
@@ -68,14 +93,14 @@ Action:  ask_user("请提供身份证号")
 </section>
 
 <section id="scenario">
-  <h2>3. 一个具体应用场景</h2>
+  <h2>5. 应用案例</h2>
   <p>我目前最看好、也最容易被低估的场景是"<strong>研究型 Agent</strong>"：你给它一篇论文 PDF，它会自动读完、查相关工作、整理对比表格、把要点写成一份摘要报告给你。</p>
   <p>具体到一个真实可触达的产品：<strong>Anthropic 的 Claude with Computer Use</strong>。你可以让它"打开浏览器，去 Hacker News 首页，把今天排名前 10 的帖子标题和链接整理成 Markdown"，它会自己截图、自己点、自己滚动、自己填表单。你能坐在旁边看着它干活。</p>
   <p>这种场景有意思的地方是：<strong>Agent 不是在替你"思考"，而是在替你"操作"</strong>。它把"思考"和"操作"分离开，让思考还是你的，但操作可以并行、可以批量、可以夜深人静时挂机。</p>
 </section>
 
-<section id="confusion">
-  <h2>4. 容易混淆的问题与边界</h2>
+<section id="contrast">
+  <h2>6. 概念辨析</h2>
   <ul>
     <li><strong>Agent ≠ Chatbot</strong>：Chatbot 只能对话，Agent 必须能动手。一个只能聊天的 AI 不是 Agent。</li>
     <li><strong>Agent ≠ LLM</strong>：LLM 是 Agent 的"大脑"，但 Agent 还需要工具、记忆、规划器这些"身体"。光有大脑不动手，不是 Agent。</li>
@@ -85,8 +110,32 @@ Action:  ask_user("请提供身份证号")
   </ul>
 </section>
 
+<section id="quiz">
+  <h2>7. 自测问题</h2>
+
+  <details>
+    <summary>Q1（理解类）请用自己的话解释什么是 Agent？它跟 Chatbot 的最大区别是什么？</summary>
+    <p><strong>答案要点</strong>：Agent 是能感知环境、自主决策、自主采取行动的 AI 系统。与 Chatbot 的最大区别在于 Chatbot 只对话、Agent 能动手——也就是说 Agent 必含"工具调用 + 自主规划"，而 Chatbot 不需要。</p>
+  </details>
+
+  <details>
+    <summary>Q2（应用类）如果要你设计一个"自动整理邮件"的 Agent，你会怎么规划？需要哪些工具？</summary>
+    <p><strong>答案要点</strong>：子任务规划建议包含"分类（垃圾 / 重要 / 订阅）→ 摘要 → 决定动作（归档 / 删除 / 标记 / 转交）→ 执行"。需要的工具至少包括：邮件 API、分类器、用户确认接口（关键动作前要停下来问人）。</p>
+  </details>
+
+  <details>
+    <summary>Q3（辨析类）有人说"用 LLM 串起来的几个步骤"也叫 Agent，你怎么看？给出你的判断标准。</summary>
+    <p><strong>答案要点</strong>：不严格。要看是否满足两条：(1) 能否基于环境反馈<strong>动态调整</strong>下一步行动（而不是流程固定）；(2) 是否能<strong>自主调用外部工具</strong>。若两条都满足，是 Agent；若只是 LLM 调用链，是 Pipeline。</p>
+  </details>
+
+  <details>
+    <summary>Q4（边界类）为什么"Agent 自主下单付款"在生产环境是高风险操作？</summary>
+    <p><strong>答案要点</strong>：因为它把"决策 + 行动 + 不可逆操作"绑在一起，且没有人类实时干预。出错成本高（钱付错 / 错买机票），且 LLM 的概率性输出 + 工具调用的非原子性会放大错误。需要"关键节点必须人确认"或"高金额必须二次验证"等安全护栏。</p>
+  </details>
+</section>
+
 <section id="sources">
-  <h2>5. 资料来源</h2>
+  <h2>8. 参考来源</h2>
   <ul>
     <li><a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">ReAct: Synergizing Reasoning and Acting in Language Models</a> <span class="cred-academic">🔵 学术 · Yao et al., 2022</span></li>
     <li><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noopener">LLM Powered Autonomous Agents — Lilian Weng</a> <span class="cred-engineering">🟡 工程博客</span></li>
@@ -96,9 +145,10 @@ Action:  ask_user("请提供身份证号")
   </ul>
 </section>
 
-<footer>
-  <div>本资料由 ai-concept-lab 仓库中的 <code>concept-explainer</code> Skill 生成。</div>
-  <div>本人已对内容进行核查：链接可点开、ReAct 论文号正确、Anthropic Computer Use 页面为官方源。</div>
+<footer id="meta">
+  <div>本资料由 ai-concept-lab 仓库的 <code>concept-explainer</code> Skill（v1.1）生成。</div>
+  <div>参数：level=intermediate · angle=综合 · output=learning-materials/agent.html</div>
+  <div>核查记录：① 链接逐个点开核对（ReAct / Attention 论文号正确；Anthropic Computer Use 与 OpenAI Function Calling 链接均为官方主域）；② "个人解释"段为第一人称亲历者口吻，非搬运；③ 自测答案要点已对照正文核对；④ ReAct 伪代码根据论文 Figure 1 简化重写。</div>
 </footer>
 </div>
 </body>

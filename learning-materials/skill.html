@@ -14,7 +14,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,B
 header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px}
 header h1{margin:0 0 8px;font-size:32px}
 header .meta{color:var(--muted);font-size:14px}
-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 28px;margin:20px 0;box-shadow:var(--shadow)}
+section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:20px 0;box-shadow:var(--shadow)}
 section h2{margin:0 0 12px;font-size:22px;color:var(--accent);border-bottom:1px dashed var(--border);padding-bottom:8px}
 section h3{margin:18px 0 8px;font-size:17px}
 p{margin:10px 0}
@@ -27,6 +27,9 @@ li{margin:6px 0}
 table{width:100%;border-collapse:collapse;margin:12px 0}
 th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
 th{background:var(--code)}
+details summary{cursor:pointer;font-weight:600;color:var(--accent);margin:6px 0}
+details[open] summary{margin-bottom:8px}
+.goals li::marker{color:var(--accent)}
 footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 .cred-official{color:#1a7f37}.cred-academic{color:#0969da}.cred-engineering{color:#9a6700}.cred-general{color:#57606a}
 </style>
@@ -34,20 +37,42 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 <body>
 <div class="wrap">
 <header>
-  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer</span><span class="crumb">Skill</span></div>
+  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer v1.1</span><span class="crumb">Skill</span></div>
   <h1>Skill — 把"会做的事"封装成可调用的资产</h1>
-  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.0</div>
+  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.1 · level=intermediate · angle=工程实践</div>
 </header>
 
+<section id="goals">
+  <h2>1. 学习目标</h2>
+  <p>读完这份资料，你应该能：</p>
+  <ul class="goals">
+    <li><strong>理解</strong>：用一句话讲清楚 Skill 的核心定位（"任务知识包"），并说出它与 Prompt 的本质区别。</li>
+    <li><strong>应用</strong>：列出 Skill 的三部分组成（元数据 / 正文指令 / 附加资源）及其各自作用。</li>
+    <li><strong>区分</strong>：说清 Skill、Prompt、Tool、Plugin 四个相邻概念的边界。</li>
+    <li><strong>设计</strong>：为一个具体任务（比如"统一 PR 描述格式"）写出一个 Skill 的 description 草案。</li>
+  </ul>
+</section>
+
 <section id="personal">
-  <h2>1. 个人解释</h2>
+  <h2>2. 个人解释</h2>
   <p>我最早接触"Skill"这个词，是在做 AI 助手的时候。我跟同事抱怨："每次让 AI 帮我写 commit message，要么太啰嗦，要么格式不对，每次还得我自己写 prompt。"同事丢给我一个 commit-message Skill，说"你以后调用它就行"。我点了调用，AI 输出的格式突然变得稳定一致——那一刻我才明白：</p>
   <blockquote>Skill 是把"<strong>一类任务的最佳实践</strong>"封装成 AI 能按需加载的资产。</blockquote>
   <p>把它想成给 AI 的"<strong>工作手册</strong>"。每次 AI 接到活儿，先看看有没有对应的 Skill 手册可参考，照着手册干，而不是凭"通才"能力瞎猜。</p>
 </section>
 
+<section id="core-questions">
+  <h2>3. 核心问题</h2>
+  <p>读到这里先停一下。围绕 Skill，这几个问题值得自己先想一遍：</p>
+  <ol>
+    <li><strong>为什么 Skill 不只是"一段 prompt"？</strong>两者的本质区别是什么？</li>
+    <li><strong>Skill 的 <code>description</code> 字段为什么被设计成"入口"？</strong>它和正文的关系是什么？</li>
+    <li><strong>"万能 Skill" 为什么是反模式？</strong>Skill 的颗粒度应该怎么设计？</li>
+    <li><strong>Skill 和 Tool 各自管什么？</strong>它们是替代还是互补？</li>
+  </ol>
+</section>
+
 <section id="mechanism">
-  <h2>2. 核心机制或组成</h2>
+  <h2>4. 结构化解释：核心机制与组成</h2>
   <p>一个标准 Skill 通常由三部分组成：</p>
   <ol>
     <li><strong>元数据（Metadata）</strong>：一段 YAML frontmatter，写明 <code>name</code>、<code>description</code>、适用场景。这是 AI 用来判断"<strong>这个任务该不该加载这个 Skill</strong>"的关键。</li>
@@ -70,7 +95,7 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 </section>
 
 <section id="scenario">
-  <h2>3. 一个具体应用场景</h2>
+  <h2>5. 应用案例</h2>
   <p>我自己目前在用、且收益最大的场景是"<strong>代码审查 Skill</strong>"。我写了一份 <code>code-review</code> Skill，要求 AI 在审查 Pull Request 时：</p>
   <ul>
     <li>先列变更范围（改了哪些文件、加了多少行）。</li>
@@ -81,8 +106,8 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   <p>用了这个 Skill 之后，AI 输出的 review 风格跟团队约定高度一致，不再是"AI 每次风格都不一样"。这才是 Skill 真正的价值——<strong>把团队隐性约定变成 AI 的硬约束</strong>。</p>
 </section>
 
-<section id="confusion">
-  <h2>4. 容易混淆的问题与边界</h2>
+<section id="contrast">
+  <h2>6. 概念辨析</h2>
   <ul>
     <li><strong>Skill ≠ Prompt</strong>。Prompt 是一次性的指令，Skill 是结构化的、可复用的资产。一个 Skill 里通常包含 prompt，但远不止 prompt。</li>
     <li><strong>Skill ≠ Tool / MCP</strong>。Tool（工具）是 AI 能调用的<strong>外部能力</strong>（搜索、发邮件、执行命令）；Skill 是 AI 加载的<strong>知识与流程</strong>。两者互补，不是替代。</li>
@@ -92,8 +117,32 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   </ul>
 </section>
 
+<section id="quiz">
+  <h2>7. 自测问题</h2>
+
+  <details>
+    <summary>Q1（理解类）一个标准 Skill 由哪三部分组成？分别起什么作用？</summary>
+    <p><strong>答案要点</strong>：(1) 元数据（YAML frontmatter）：决定 Skill 在何时被"发现/触发"；(2) 正文指令（Markdown 主体）：决定 Skill 被加载后 AI 该"怎么执行"；(3) 附加资源（可选）：模板/示例/脚本，扩展 Skill 的可执行能力。三者缺一不可——没有元数据不会被发现，没有正文无法执行，没有附加资源则能力受限。</p>
+  </details>
+
+  <details>
+    <summary>Q2（应用类）如果你们团队想"让 AI 生成的 PR 描述统一格式"，请设计一个 Skill 的 description 字段。</summary>
+    <p><strong>答案要点</strong>：description 应说明三件事——什么场景触发、要解决什么问题、加载后会做什么。范例：<br><code>"当用户请求为一个 Pull Request 撰写描述时加载。按团队的固定模板（背景 / 改动 / 测试 / 影响范围）输出结构化 Markdown，禁止自由发挥。"</code><br>关键是：触发条件明确 + 行为承诺具体，不要写成"帮你写 PR 描述"这种含糊描述。</p>
+  </details>
+
+  <details>
+    <summary>Q3（辨析类）Skill 和 Tool 的边界在哪？给一个具体例子说明两者如何配合。</summary>
+    <p><strong>答案要点</strong>：Skill 管"怎么做"（流程/规范），Tool 管"能做什么"（外部能力）。例子：写一个"竞品分析" Skill，它的工作流是"先列维度 → 检索每家 → 整理表格 → 输出结论"。Skill 本身不提供检索能力，但可以声明需要 <code>web_search</code> 这个 Tool——加载 Skill 后 AI 会自动使用 Tool 完成检索步骤。Skill 提供规则，Tool 提供能力。</p>
+  </details>
+
+  <details>
+    <summary>Q4（边界类）为什么说"万能 Skill"是反模式？颗粒度应该怎么设计？</summary>
+    <p><strong>答案要点</strong>：万能 Skill 想覆盖所有任务，结果是任何任务都做不精——它的 description 模糊、触发不精确、正文指令互相矛盾。正确颗粒度是"<strong>一类可复用任务</strong>"（如：PR 描述、commit message、SQL 评审、Tailwind 转 CSS）。判断标准：能否用一两句话清晰说明它的触发条件与产出格式；如不能，应拆分。</p>
+  </details>
+</section>
+
 <section id="sources">
-  <h2>5. 资料来源</h2>
+  <h2>8. 参考来源</h2>
   <ul>
     <li><a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener">Agent Skills overview — Claude Docs</a> <span class="cred-official">🟢 官方 · Anthropic</span></li>
     <li><a href="https://support.anthropic.com/en/articles/8698647-what-are-skills" target="_blank" rel="noopener">What are Skills? — Anthropic Support</a> <span class="cred-official">🟢 官方 · Anthropic</span></li>
@@ -103,9 +152,10 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   </ul>
 </section>
 
-<footer>
-  <div>本资料由 ai-concept-lab 仓库中的 <code>concept-explainer</code> Skill 生成——这是一个 Skill 在自我解释。</div>
-  <div>本人已核查：Anthropic Claude Docs 与 MCP 官方站链接均为主域；WorkBuddy 文档路径正确。</div>
+<footer id="meta">
+  <div>本资料由 ai-concept-lab 仓库的 <code>concept-explainer</code> Skill（v1.1）生成——这是一个 Skill 在自我解释。</div>
+  <div>参数：level=intermediate · angle=工程实践 · output=learning-materials/skill.html</div>
+  <div>核查记录：① Claude Docs 链接指向 docs.claude.com 主域；② MCP 官方站 modelcontextprotocol.io 链接正确；③ WorkBuddy 文档路径 docs.workbuddy.cn/docs/workbuddy/Overview 已核对；④ "个人解释"段为第一人称亲历者口吻，非搬运；⑤ 自测 Q3 中 Skill/Tool 配合的描述基于本地仓库的实际设计；⑥ 引用本仓库的 <code>concept-explainer</code> 作为"自我演示"案例，是真实文件而非虚构。</div>
 </footer>
 </div>
 </body>

@@ -14,7 +14,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,B
 header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px}
 header h1{margin:0 0 8px;font-size:32px}
 header .meta{color:var(--muted);font-size:14px}
-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 28px;margin:20px 0;box-shadow:var(--shadow)}
+section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:20px 0;box-shadow:var(--shadow)}
 section h2{margin:0 0 12px;font-size:22px;color:var(--accent);border-bottom:1px dashed var(--border);padding-bottom:8px}
 section h3{margin:18px 0 8px;font-size:17px}
 p{margin:10px 0}
@@ -27,6 +27,9 @@ li{margin:6px 0}
 table{width:100%;border-collapse:collapse;margin:12px 0}
 th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
 th{background:var(--code)}
+details summary{cursor:pointer;font-weight:600;color:var(--accent);margin:6px 0}
+details[open] summary{margin-bottom:8px}
+.goals li::marker{color:var(--accent)}
 footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 .cred-official{color:#1a7f37}.cred-academic{color:#0969da}.cred-engineering{color:#9a6700}.cred-general{color:#57606a}
 </style>
@@ -34,13 +37,25 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 <body>
 <div class="wrap">
 <header>
-  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer</span><span class="crumb">LLM Context</span></div>
+  <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-explainer v1.1</span><span class="crumb">LLM Context</span></div>
   <h1>大模型的上下文 — AI 的"工作记忆"</h1>
-  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.0</div>
+  <div class="meta">生成于 2026-09-06 · Skill <code>concept-explainer</code> v1.1 · level=intermediate · angle=综合</div>
 </header>
 
+<section id="goals">
+  <h2>1. 学习目标</h2>
+  <p>读完这份资料，你应该能：</p>
+  <ul class="goals">
+    <li><strong>理解</strong>：区分"输入侧 / 输出侧 / 总容量"三层 context window 含义。</li>
+    <li><strong>理解</strong>：解释 Transformer 注意力 O(n²) 复杂度对长上下文的根本性约束。</li>
+    <li><strong>应用</strong>：面对超长文档，能选择合适的策略（全塞 / RAG / 分段摘要）。</li>
+    <li><strong>区分</strong>：说清 context、memory、prompt 三者的边界。</li>
+    <li><strong>评估</strong>：判断"上下文越大越好"这个说法是否成立。</li>
+  </ul>
+</section>
+
 <section id="personal">
-  <h2>1. 个人解释</h2>
+  <h2>2. 个人解释</h2>
   <p>我跟人解释"上下文"的时候，最爱用一个比喻：<strong>大模型的上下文就像一个人的桌面</strong>。桌面越大，你能摊开的资料越多；桌面满了，你只能把最不重要的挪走。</p>
   <p>我以前总把"上下文窗口"当成一个简单的"字数限制"，后来发现它其实有三层意思：</p>
   <ul>
@@ -51,8 +66,19 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   <p>所以我说："上下文 = LLM 一次能'看见'和'产出'的所有 token"。它决定了 LLM 这台机器单次能处理多少信息。</p>
 </section>
 
+<section id="core-questions">
+  <h2>3. 核心问题</h2>
+  <p>读到这里先停一下。围绕"上下文"，这几个问题值得自己先想一遍：</p>
+  <ol>
+    <li><strong>为什么 Transformer 注意力是 O(n²) 而不是 O(n)？</strong>这意味着"上下文翻倍"会带来什么成本？</li>
+    <li><strong>context window 是不是越大越好？</strong>什么是业内所说的 "context rot"？</li>
+    <li><strong>"扩展窗口"和 "RAG" 是替代关系还是互补关系？</strong>分别解决什么问题？</li>
+    <li><strong>context、memory、prompt 三个概念边界在哪？</strong>为什么说"上下文不是越多越安全"？</li>
+  </ol>
+</section>
+
 <section id="mechanism">
-  <h2>2. 核心机制或组成</h2>
+  <h2>4. 结构化解释：核心机制与组成</h2>
   <p>技术细节上，要把握三件事：</p>
   <ol>
     <li><strong>Tokenizer 把文本切成 token</strong>。英文大约 1 token ≈ 0.75 个单词；中文大约 1 token ≈ 1–2 个汉字。这是计费和窗口的"原子单位"。</li>
@@ -71,14 +97,14 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
 </section>
 
 <section id="scenario">
-  <h2>3. 一个具体应用场景</h2>
+  <h2>5. 应用案例</h2>
   <p>我最近一次真正"用上"长上下文，是我让 Claude 帮我审一份 90 页的产品需求文档。我没做任何预处理，直接把 PDF 全文贴进去，问它："找出文档里所有前后矛盾的需求点，按章节列出来。"</p>
   <p>模型读完反馈说第 3 章说"用户每月最多上传 100 个文件"，第 7 章说"用户每次最多上传 50 个文件"，但需求文档里没明确两者关系。我去核查了一下，确实是个内部矛盾。这种"<strong>跨章节的引用一致性</strong>"问题，是短上下文模型几乎不可能完成的。</p>
   <p>另一个常见但常被低估的场景：<strong>代码审查</strong>。一次性把整个代码仓库（几千行）丢进去，让模型做架构层面的检查，比只看单个函数有效得多。</p>
 </section>
 
-<section id="confusion">
-  <h2>4. 容易混淆的问题与边界</h2>
+<section id="contrast">
+  <h2>6. 概念辨析</h2>
   <ul>
     <li><strong>上下文 ≠ 记忆（Memory）</strong>。上下文是"这一次对话能看见的"，记忆是"跨对话能记住的"。前者由 context window 决定，后者要靠向量库或外部存储。</li>
     <li><strong>上下文窗口大 ≠ 表现好</strong>。上面说的 "context rot" 就是反例。窗口扩大一倍，价格可能涨四倍，质量提升可能只有 10%。</li>
@@ -87,8 +113,32 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   </ul>
 </section>
 
+<section id="quiz">
+  <h2>7. 自测问题</h2>
+
+  <details>
+    <summary>Q1（理解类）context window 的"输入侧 / 输出侧 / 总容量"分别指什么？</summary>
+    <p><strong>答案要点</strong>：输入侧 = 这次请求能给模型看多少（用户消息 + 历史 + RAG 片段 + 工具返回）；输出侧 = 模型单次响应最多能生成多少 token；总容量 = 输入侧 + 输出侧的 token 上限。三者经常被混为一谈，是造成"为什么我的回复被截断"误解的根源。</p>
+  </details>
+
+  <details>
+    <summary>Q2（应用类）给你一份 200 页的 PDF，要让 LLM 回答"作者的核心论点是什么"。你会选：① 全部塞进上下文 ② RAG ③ 分段摘要？说明理由。</summary>
+    <p><strong>答案要点</strong>：通常选 ② 或 ③。① 直接塞会超窗（200 页 ≈ 80–150K tokens，多数模型装不下）+ context rot（后段质量衰减）。② RAG：先按段落切、向量化、检索 top-k 段落 + 问题，精确可追溯。③ 分段摘要：每段先总结，再对总结再总结，适合"总论点"类问题。一般"<strong>② 优先，③ 兜底</strong>"。</p>
+  </details>
+
+  <details>
+    <summary>Q3（辨析类）"上下文 = 记忆"这个说法对吗？为什么？</summary>
+    <p><strong>答案要点</strong>：不对。上下文是当前对话窗口里"可见"的 token，受 context window 约束；记忆是跨会话/跨时间"持久"的，需借助向量库、KV 数据库、外部文件系统等。两者技术实现完全独立：会话结束上下文就消失，但记忆可以保留到下次。</p>
+  </details>
+
+  <details>
+    <summary>Q4（边界类）为什么说"上下文不是越多越安全"？</summary>
+    <p><strong>答案要点</strong>：因为多余内容会产生 distraction（分心），稀释关键指令的权重；同时增加 token 费用、放大 context rot、可能让敏感信息泄漏到上下文。原则是"只放必要信息"。</p>
+  </details>
+</section>
+
 <section id="sources">
-  <h2>5. 资料来源</h2>
+  <h2>8. 参考来源</h2>
   <ul>
     <li><a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Attention Is All You Need</a> <span class="cred-academic">🔵 学术 · Vaswani et al., 2017</span></li>
     <li><a href="https://docs.anthropic.com/en/docs/build-with-claude/context-windows" target="_blank" rel="noopener">Context windows — Anthropic Documentation</a> <span class="cred-official">🟢 官方 · Anthropic</span></li>
@@ -98,9 +148,10 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   </ul>
 </section>
 
-<footer>
-  <div>本资料由 ai-concept-lab 仓库中的 <code>concept-explainer</code> Skill 生成。</div>
-  <div>本人已核查：Attention Is All You Need 论文号正确；Anthropic 官方文档链接为 build-with-claude 域；OpenAI 文档主域正确。</div>
+<footer id="meta">
+  <div>本资料由 ai-concept-lab 仓库的 <code>concept-explainer</code> Skill（v1.1）生成。</div>
+  <div>参数：level=intermediate · angle=综合 · output=learning-materials/llm-context.html</div>
+  <div>核查记录：① Attention Is All You Need 论文号 1706.03762 已核对；② Anthropic 文档链接为 build-with-claude 子域；③ "个人解释"段为第一人称，非搬运；④ 自测答案要点已与正文机制部分核对；⑤ O(n²) 复杂度表述与 Transformer 原论文 Section 3.2.1 一致。</div>
 </footer>
 </div>
 </body>

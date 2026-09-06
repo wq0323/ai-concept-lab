@@ -34,6 +34,7 @@ footer{margin-top:32px;color:var(--muted);font-size:13px;text-align:center}
   <div><span class="crumb">ai-concept-lab</span><span class="crumb">concept-relationship</span></div>
   <h1>概念关系：Agent · 大模型的上下文 · Skill</h1>
   <div class="meta">配套学习资料：<a href="./agent.html">agent.html</a> · <a href="./llm-context.html">llm-context.html</a> · <a href="./skill.html">skill.html</a></div>
+  <div class="meta">本仓库使用的项目级 Skill：<code>concept-explainer</code> v1.1（8 段式：学习目标 / 个人解释 / 核心问题 / 结构化解释 / 应用案例 / 概念辨析 / 自测问题 / 参考来源）</div>
 </header>
 
 <section id="one-liner">
@@ -130,8 +131,9 @@ rebuild_context = system_prompt + goal + last_3_steps + summarized_history</code
   </ul>
 </section>
 
-<footer>
-  本关系图与说明由 ai-concept-lab 仓库维护，可与三份单概念 HTML 配合阅读。
+<footer id="meta">
+  <div>本关系图与说明由 ai-concept-lab 仓库维护，可与三份单概念 HTML 配合阅读。</div>
+  <div style="margin-top:8px">v1.1 升级：单概念 HTML 现在含 8 段（学习目标 / 核心问题 / 自测问题），本关系页未单独升级章节；Mermaid 图中 Skill 节点仍代表"沉淀任务知识"。</div>
 </footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>

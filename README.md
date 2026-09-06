@@ -8,9 +8,10 @@
 
 把"理解一个陌生 AI / 技术概念"这件事沉淀成可复用的工作流：
 
-1. **Skill 模板**：`concept-explainer` 给出统一的五段式资料结构（个人解释 / 核心机制 / 应用场景 / 混淆与边界 / 资料来源），不只为某一个概念服务。
+1. **Skill 模板**：`concept-explainer`（v1.1，8 段式）给出统一资料结构（学习目标 / 个人解释 / 核心问题 / 结构化解释 / 应用案例 / 概念辨析 / 自测问题 / 参考来源），不只为某一个概念服务。
 2. **示例资料**：调用该 Skill 生成的三份概念学习资料（Agent、大模型的上下文、Skill），以及一份概念关系说明。
 3. **可核查**：每份资料都附资料来源链接，并标记可信度（官方 / 学术 / 工程 / 一般）。
+4. **可扩展**：仓库结构按"持续添加新概念"设计，后续可以再增加更多概念的资料与新 Skill。
 
 ## 目录结构
 
@@ -19,12 +20,13 @@ ai-concept-lab/
 ├── .workbuddy/
 │   └── skills/
 │       └── concept-explainer/
-│           └── SKILL.md        # 项目级 Skill 入口
+│           └── SKILL.md        # 项目级 Skill 入口（v1.1，8 段式）
 ├── learning-materials/
 │   ├── agent.html              # 概念：Agent
 │   ├── llm-context.html        # 概念：大模型的上下文
 │   ├── skill.html              # 概念：Skill
 │   └── concept-relationship.html  # 三概念关系说明（含 Mermaid 图）
+├── DEVELOPMENT.md              # 踩坑与诊断记录（网络、API、Git、Token 等）
 ├── README.md
 └── .gitignore
 ```
@@ -100,8 +102,13 @@ AI 生成 → 人工核查，并非"全自动可信"。本仓库的人工核查�
 - 本仓库不包含任何 API Key、密码、个人隐私信息。
 - `.gitignore` 已排除常见的本地环境文件与敏感文件。
 - 之前用于 GitHub API 操作的 Personal Access Token 仅在创建/恢复仓库时使用过一次，已建议用户撤销。
+- 详细踩坑与诊断记录见 [`DEVELOPMENT.md`](./DEVELOPMENT.md)（含网络问题、GitHub API 中文编码、Token scope、Git 行为怪异等真实案例）。
 
 ## 维护
 
 - 欢迎通过 Issue 或 PR 补充更多概念的资料（按 `concept-explainer` Skill 模板生成即可）。
 - Skill 的版本演进记录在 `SKILL.md` 末尾的"版本"小节。
+- **后续课程扩展指引**：
+  - 新概念 → 在 `learning-materials/` 下加一份按 Skill 模板生成的 HTML，并在 README 的"已生成的学习资料"小节登记一行。
+  - 新 Skill → 在 `.workbuddy/skills/<new-skill-name>/` 下加一份 `SKILL.md`（含 YAML frontmatter + 自检清单），并在 README 的"目录结构"小节登记。
+  - 关系图更新 → 修改 `concept-relationship.html` 的 Mermaid 块，必要时附一段文字说明新增节点与既有节点的关系。
